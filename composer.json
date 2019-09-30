@@ -1,0 +1,29 @@
+{
+    "name": "larium/search",
+    "description": "Simple search for http queries.",
+    "keywords": ["http search", "search", "filtering", "criteria"],
+    "type": "Library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andreas Kollaros",
+            "email": "andreas@larium.net"
+        }
+    ],
+    "require": {
+        "php": ">=7.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~8.3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Larium\\Search\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Larium\\Search\\": "tests/"
+        }
+    }
+}
