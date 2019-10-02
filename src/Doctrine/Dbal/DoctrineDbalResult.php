@@ -6,6 +6,9 @@ namespace Larium\Search\Doctrine\Dbal;
 
 use Larium\Search\Result;
 use Doctrine\DBAL\Query\QueryBuilder;
+use function sprintf;
+use function intval;
+use function reset;
 
 class DoctrineDbalResult implements Result
 {
@@ -13,9 +16,12 @@ class DoctrineDbalResult implements Result
 
     private $count;
 
-    public function __construct(QueryBuilder $queryBuilder)
+    private $countField;
+
+    public function __construct(QueryBuilder $queryBuilder, string $countField = null)
     {
         $this->queryBuilder = $queryBuilder;
+        $this->countField = $countField;
     }
 
     public function fetch(int $offset, int $limit): array
@@ -31,8 +37,7 @@ class DoctrineDbalResult implements Result
     {
         if (null === $this->count) {
             $qb = clone $this->queryBuilder;
-            $alias = $this->getAlias();
-            $sql = sprintf('COUNT(%sid) AS total_results', $alias);
+            $sql = sprintf('COUNT(%s) AS total_results', $this->getCountField());
             $qb->select($sql)
                ->resetQueryPart('orderBy')
                ->setMaxResults(1);
@@ -40,6 +45,15 @@ class DoctrineDbalResult implements Result
         }
 
         return $this->count;
+    }
+
+    private function getCountField(): string
+    {
+        if (null === $this->countField) {
+            return sprintf('%sid', $this->getAlias());
+        }
+
+        return $this->countField;
     }
 
     private function getAlias(): string

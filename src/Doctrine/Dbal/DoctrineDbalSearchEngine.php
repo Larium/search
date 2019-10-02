@@ -4,32 +4,34 @@ declare(strict_types = 1);
 
 namespace Larium\Search\Doctrine\Dbal;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Larium\Search\Criteria;
 use Larium\Search\Result;
 use Larium\Search\SearchEngine;
 
 class DoctrineDbalSearchEngine implements SearchEngine
 {
-    private $connection;
+    private $queryBuilder;
 
     private $builders = [];
 
-    public function __construct(Connection $connection)
+    private $countField;
+
+    public function __construct(QueryBuilder $queryBuilder, string $countField = null)
     {
-        $this->connection = $connection;
+        $this->queryBuilder = $queryBuilder;
+        $this->countField = $countField;
     }
 
     public function match(Criteria $criteria): Result
     {
-        $queryBuilder = $this->connection->createQueryBuilder();
         foreach ($this->builders as $builder) {
             if ($builder->supports($criteria)) {
-                $builder->build($criteria, $queryBuilder);
+                $builder->build($criteria, $this->queryBuilder);
             }
         }
 
-        return new DoctrineDbalResult($queryBuilder);
+        return new DoctrineDbalResult($this->queryBuilder, $this->countField);
     }
 
     public function add(Builder $builder): DoctrineDbalSearchEngine
