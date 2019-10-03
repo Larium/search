@@ -20,7 +20,7 @@ class DoctrineDbalPaginator implements Paginator
 
     private $iterator;
 
-    private $count = false;
+    private $count;
 
     public function __construct(Result $result, Paginating $paginating)
     {
@@ -31,7 +31,7 @@ class DoctrineDbalPaginator implements Paginator
 
     public function count(): int
     {
-        if ($this->count === false) {
+        if ($this->count === null) {
             $this->count = $this->result->count();
         }
 

@@ -47,7 +47,7 @@ class DoctrineDbalResult implements Result
         return $this->count;
     }
 
-    private function getCountField(): string
+    public function getCountField(): string
     {
         if (null === $this->countField) {
             return sprintf('%sid', $this->getAlias());

@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Larium\Search\Criteria;
 
+use function intval;
+
 class Paginating
 {
     const DEFAULT_CURRENT_PAGE = 1;

@@ -31,7 +31,7 @@ class Ordering
             : self::DEFAULT_FIELD;
         $direction = self::DEFAULT_DIRECTION;
         if ('-' === $field[0]) {
-            $direction = 'DESC';
+            $direction = self::DESC;
             $field = trim($field, '-');
         }
 
