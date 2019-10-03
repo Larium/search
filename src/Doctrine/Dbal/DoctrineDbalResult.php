@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Larium\Search\Doctrine\Dbal;
 
+use PDO;
 use Larium\Search\Result;
 use Doctrine\DBAL\Query\QueryBuilder;
 use function sprintf;
