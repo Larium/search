@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use ArrayIterator;
 use Larium\Search\Criteria\Paginating;
 
-class  DoctrineDbalPaginatorTest extends TestCase
+class DoctrineDbalPaginatorTest extends TestCase
 {
     private $result;
 

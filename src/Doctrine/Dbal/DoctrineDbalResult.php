@@ -19,10 +19,11 @@ class DoctrineDbalResult implements Result
 
     private $countField;
 
-    public function __construct(QueryBuilder $queryBuilder, string $countField = null)
+    private $countFunction;
+
+    public function __construct(QueryBuilder $queryBuilder)
     {
         $this->queryBuilder = $queryBuilder;
-        $this->countField = $countField;
     }
 
     public function fetch(int $offset, int $limit): array
@@ -38,10 +39,15 @@ class DoctrineDbalResult implements Result
     {
         if (null === $this->count) {
             $qb = clone $this->queryBuilder;
-            $sql = sprintf('COUNT(%s) AS total_results', $this->getCountField());
-            $qb->select($sql)
-               ->resetQueryPart('orderBy')
-               ->setMaxResults(1);
+            if ($this->countFunction) {
+                $qb = $this->countFunction->__invoke($qb);
+            } else {
+                $sql = sprintf('COUNT(%s) AS total_results', $this->getCountField());
+                $qb->select($sql)
+                   ->resetQueryPart('orderBy')
+                   ->setMaxResults(1);
+            }
+
             $this->count = intval($qb->execute()->fetchColumn());
         }
 
@@ -55,6 +61,16 @@ class DoctrineDbalResult implements Result
         }
 
         return $this->countField;
+    }
+
+    public function setCountField(string $countField): void
+    {
+        $this->countField = $countField;
+    }
+
+    public function setCountCallable(callable $function): void
+    {
+        $this->countFunction = $function;
     }
 
     private function getAlias(): string

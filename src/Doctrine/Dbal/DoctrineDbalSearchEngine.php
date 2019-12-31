@@ -15,12 +15,9 @@ class DoctrineDbalSearchEngine implements SearchEngine
 
     private $builders = [];
 
-    private $countField;
-
-    public function __construct(QueryBuilder $queryBuilder, string $countField = null)
+    public function __construct(QueryBuilder $queryBuilder)
     {
         $this->queryBuilder = $queryBuilder;
-        $this->countField = $countField;
     }
 
     public function match(Criteria $criteria): Result
@@ -31,7 +28,7 @@ class DoctrineDbalSearchEngine implements SearchEngine
             }
         }
 
-        return new DoctrineDbalResult($this->queryBuilder, $this->countField);
+        return new DoctrineDbalResult($this->queryBuilder);
     }
 
     public function add(Builder $builder): DoctrineDbalSearchEngine
