@@ -2,7 +2,7 @@
     "name": "larium/search",
     "description": "Simple search for http queries.",
     "keywords": ["http search", "search", "filtering", "criteria"],
-    "type": "Library",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
