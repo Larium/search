@@ -19,7 +19,7 @@ class SearchAdapter implements AdapterInterface
     /**
      * {@inheritDoc}
      */
-    public function getNbResults()
+    public function getNbResults(): int
     {
         return $this->result->count();
     }
@@ -27,7 +27,7 @@ class SearchAdapter implements AdapterInterface
     /**
      * {@inheritDoc}
      */
-    public function getSlice($offset, $length)
+    public function getSlice($offset, $length): iterable
     {
         return $this->result->fetch($offset, $length);
     }
