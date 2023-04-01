@@ -30,12 +30,12 @@ class DoctrineDbalResult implements Result
     {
         $this->queryBuilder->setFirstResult($offset);
         $this->queryBuilder->setMaxResults($limit);
-        $stmt = $this->queryBuilder->execute();
+        $stmt = $this->queryBuilder->executeQuery();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAllAssociative();
     }
 
-    public function count()
+    public function count(): int
     {
         if (null === $this->count) {
             $qb = clone $this->queryBuilder;
@@ -48,7 +48,7 @@ class DoctrineDbalResult implements Result
                    ->setMaxResults(1);
             }
 
-            $this->count = intval($qb->execute()->fetchColumn());
+            $this->count = intval($qb->executeQuery()->fetchOne());
         }
 
         return $this->count;
