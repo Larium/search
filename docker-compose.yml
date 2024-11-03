@@ -9,6 +9,7 @@ services:
     stdin_open: true
     volumes:
       - .:/opt/php
+      - ./.docker/xdebug.ini:/usr/local/etc/php/conf.d/15-xdebug.ini
     networks:
       - search-network
   mongo-server:
