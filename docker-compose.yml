@@ -1,0 +1,33 @@
+version: "3.1"
+services:
+  php-cli:
+    build: .docker
+    container_name: larium-search
+    image: larium-search:latest
+    working_dir: /opt/php
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/opt/php
+    networks:
+      - search-network
+  mongo-server:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB}
+      - MONGO_INITDB_USER=${MONGODB_USER}
+      - MONGO_INITDB_PWD=${MONGODB_PASSWORD}
+    ports:
+      - "27022:27017"
+    volumes:
+      - ./.docker/mongo/init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+      - mongo-data:/data/db
+    networks:
+      - search-network
+volumes:
+  mongo-data:
+networks:
+  search-network:
+    driver: bridge
