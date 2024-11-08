@@ -9,6 +9,7 @@ use MongoDB\Database;
 use MongoDB\Collection;
 use Larium\Search\Criteria;
 use PHPUnit\Framework\TestCase;
+use Larium\Search\ResultPaginator;
 
 class MongoDbSearchEngineTest extends TestCase
 {
@@ -99,6 +100,28 @@ class MongoDbSearchEngineTest extends TestCase
         $result = $e->match($criteria);
 
         self::assertEquals(3, $result->count());
+    }
+
+    public function testPaginator(): void
+    {
+        $criteria = Criteria::fromQueryParams('fruits', ['name' => 'a', 'color' => 'yellow', 'page' => 1, 'limit' => 2]);
+
+        $c = $this->collection;
+        $b = new FilterBuilder();
+        $e = new MongoDbSearchEngine($b, $c);
+
+        $e->add(new FruitNameBuilder())
+            ->add(new FruitColorBuilder())
+        ;
+
+        $result = $e->match($criteria);
+
+        $paginator = new ResultPaginator($result, $criteria->paginating);
+
+        self::assertEquals(3, $paginator->count());
+        self::assertEquals(2, $paginator->getTotalPages());
+        self::assertTrue($paginator->hasMore());
+        self::assertEquals(2, $paginator->getNextPage());
     }
 
     private function createClient(): Client
