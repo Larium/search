@@ -1,18 +1,19 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Larium\Search\Doctrine\Dbal;
+namespace Larium\Search;
 
-use Larium\Search\Criteria\Paginating;
-use Larium\Search\Paginator;
-use Larium\Search\Result;
-use ArrayIterator;
 use Traversable;
-use function intval;
-use function ceil;
+use ArrayIterator;
+use Larium\Search\Result;
+use Larium\Search\Paginator;
+use Larium\Search\Criteria\Paginating;
 
-class DoctrineDbalPaginator implements Paginator
+use function ceil;
+use function intval;
+
+class ResultPaginator implements Paginator
 {
     private $result;
 
@@ -76,7 +77,7 @@ class DoctrineDbalPaginator implements Paginator
     public function getPreviousPage(): ?int
     {
         return $this->paginating->currentPage > 1
-            ?  $this->paginating->currentPage - 1
+            ? $this->paginating->currentPage - 1
             : null;
     }
 }
