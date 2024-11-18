@@ -44,7 +44,7 @@ class DoctrineDbalResult implements Result
             } else {
                 $sql = sprintf('COUNT(%s) AS total_results', $this->getCountField());
                 $qb->select($sql)
-                   ->resetQueryPart('orderBy')
+                   ->resetOrderBy()
                    ->setMaxResults(1);
             }
 

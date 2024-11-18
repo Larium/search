@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace Larium\Search\Doctrine\Dbal;
 
-use Larium\Search\Criteria;
 use Larium\Search\Result;
 use PHPUnit\Framework\TestCase;
 use ArrayIterator;
 use Larium\Search\Criteria\Paginating;
+use Larium\Search\ResultPaginator;
 
 class DoctrineDbalPaginatorTest extends TestCase
 {
@@ -17,7 +17,7 @@ class DoctrineDbalPaginatorTest extends TestCase
     public function setUp(): void
     {
         $this->result = $this->createMock(Result::class);
-        $this->result->expects($this->any())->method('count')->will($this->returnValue(20));
+        $this->result->expects($this->any())->method('count')->willReturn(20);
         $this->result->expects($this->any())->method('fetch')->willReturn([
             ['id' => 1, 'amount' => 1000],
             ['id' => 2, 'amount' => 4500],
@@ -30,7 +30,7 @@ class DoctrineDbalPaginatorTest extends TestCase
     public function testPaginator(): void
     {
         $paginating = Paginating::fromQueryParams(['page' => 1, 'limit' => 5]);
-        $p = new DoctrineDbalPaginator($this->result, $paginating);
+        $p = new ResultPaginator($this->result, $paginating);
         $iterator = $p->getIterator();
 
         $this->assertEquals(1, $p->getCurrentPage());
@@ -41,7 +41,7 @@ class DoctrineDbalPaginatorTest extends TestCase
         $this->assertInstanceOf(ArrayIterator::class, $iterator);
 
         $paginating = Paginating::fromQueryParams(['page' => 2, 'limit' => 5]);
-        $p = new DoctrineDbalPaginator($this->result, $paginating);
+        $p = new ResultPaginator($this->result, $paginating);
         $this->assertEquals(2, $p->getCurrentPage());
         $this->assertEquals(4, $p->getTotalPages());
         $this->assertTrue($p->hasMore());
