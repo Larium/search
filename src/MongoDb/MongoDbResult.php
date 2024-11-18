@@ -21,7 +21,9 @@ class MongoDbResult implements Result
     public function fetch(int $offset, int $limit): array
     {
         $filter = $this->normalizeFilter();
-        $iterator = $this->collection->find($filter, ['skip' => $offset, 'limit' => $limit]);
+        $options = ['skip' => $offset, 'limit' => $limit];
+        $options = $this->addSorting($filter, $options);
+        $iterator = $this->collection->find($filter, $options);
 
         return iterator_to_array($iterator);
     }
@@ -41,7 +43,20 @@ class MongoDbResult implements Result
 
     public function count(): int
     {
-        return $this->collection->countDocuments($this->normalizeFilter());
+        $filter = $this->normalizeFilter();
+        $options = $this->addSorting($filter, []);
+
+        return $this->collection->countDocuments($filter, $options);
+    }
+
+    private function addSorting(array &$filter, array $options): array
+    {
+        if (isset($filter['sort'])) {
+            $options['sort'] = $filter['sort'];
+            unset($filter['sort']);
+        }
+
+        return $options;
     }
 
     private function normalizeFilter(): array
@@ -50,10 +65,11 @@ class MongoDbResult implements Result
             return $this->filter;
         }
 
-        $this->filter = array_reduce($this->filterBuilder->getArrayCopy(), function (array $result, array $item) {
-            $result = array_merge($result, $item);
-            return $result;
-        }, []);
+        $this->filter = array_reduce(
+            $this->filterBuilder->getArrayCopy(),
+            fn (array $result, array $item) => array_merge($result, $item),
+            []
+        );
 
         return $this->filter;
     }

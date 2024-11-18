@@ -11,11 +11,12 @@ use Larium\Search\Criteria;
 use Larium\Search\Doctrine\Dbal\Builder\TransactionBuilder;
 use Larium\Search\Doctrine\Dbal\Builder\TransactionStatusBuilder;
 use Larium\Search\Result;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DoctrineDbalSearchEngineTest extends TestCase
 {
-    private $conn;
+    private Connection|MockObject $conn;
 
     public function setUp(): void
     {
