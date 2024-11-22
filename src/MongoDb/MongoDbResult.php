@@ -9,7 +9,7 @@ use Larium\Search\Result;
 
 class MongoDbResult implements Result
 {
-    private array $filter = [];
+    private array $query = [];
 
     public function __construct(
         private readonly FilterBuilder $filterBuilder,
@@ -20,10 +20,10 @@ class MongoDbResult implements Result
 
     public function fetch(int $offset, int $limit): array
     {
-        $filter = $this->normalizeFilter();
+        $query = $this->getQuery();
         $options = ['skip' => $offset, 'limit' => $limit];
-        $options = $this->addSorting($filter, $options);
-        $iterator = $this->collection->find($filter, $options);
+        $options = $this->addSorting($query, $options);
+        $iterator = $this->collection->find($query, $options);
 
         return iterator_to_array($iterator);
     }
@@ -43,10 +43,10 @@ class MongoDbResult implements Result
 
     public function count(): int
     {
-        $filter = $this->normalizeFilter();
-        $options = $this->addSorting($filter, []);
+        $query = $this->getQuery();
+        $options = $this->addSorting($query, []);
 
-        return $this->collection->countDocuments($filter, $options);
+        return $this->collection->countDocuments($query, $options);
     }
 
     private function addSorting(array &$filter, array $options): array
@@ -59,18 +59,12 @@ class MongoDbResult implements Result
         return $options;
     }
 
-    private function normalizeFilter(): array
+    private function getQuery(): array
     {
-        if (!empty($this->filter)) {
-            return $this->filter;
+        if (!empty($this->query)) {
+            return $this->query;
         }
 
-        $this->filter = array_reduce(
-            $this->filterBuilder->getArrayCopy(),
-            fn (array $result, array $item) => array_merge($result, $item),
-            []
-        );
-
-        return $this->filter;
+        return $this->query = $this->filterBuilder->getQuery();
     }
 }
