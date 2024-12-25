@@ -124,6 +124,24 @@ class MongoDbSearchEngineTest extends TestCase
         self::assertEquals(2, $paginator->getNextPage());
     }
 
+    public function testCompositeBuilder(): void
+    {
+        $criteria = Criteria::fromQueryParams('fruits', ['name' => 'a', 'color' => 'yellow', 'page' => 1, 'limit' => 2]);
+        $c = $this->collection;
+        $b = new FilterBuilder();
+        $e = new MongoDbSearchEngine($b, $c);
+
+        $e->add(new CompositeBuilder(new FruitNameBuilder(), new FruitColorBuilder()));
+
+        $result = $e->match($criteria);
+        $paginator = new ResultPaginator($result, $criteria->paginating);
+
+        self::assertEquals(3, $paginator->count());
+        self::assertEquals(2, $paginator->getTotalPages());
+        self::assertTrue($paginator->hasMore());
+        self::assertEquals(2, $paginator->getNextPage());
+    }
+
     private function createClient(): Client
     {
         $client = new Client(
